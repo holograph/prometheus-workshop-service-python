@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "prometheus-workshop-service-python"
+version = "0.1.0"
+description = ""
+authors = ["Tomer Gabel <tomer@tomergabel.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.112.1"
+uvicorn = {extras = ["standard"], version = "^0.30.6"}
+opentelemetry-instrumentation-fastapi = "^0.47b0"
+
+[tool.poetry.group.dev.dependencies]
+fastapi-cli = "^0.0.5"
+ruff = "^0.6.1"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
