@@ -2,11 +2,14 @@ import os
 import time
 from datetime import timedelta
 from threading import Thread, Event
+from unittest.mock import DEFAULT
 
 from workshop_service.scenario import Scenario
 from workshop_service.utils import parse_size
 
 DEFAULT_CHUNK_SIZE = parse_size(os.environ.get("SCENARIO_MEMLEAK_CHUNK_SIZE", "4mb"))
+DEFAULT_INTERVAL = timedelta(seconds=1)
+
 
 class MemoryLeak(Scenario):
     @classmethod
@@ -20,10 +23,10 @@ class MemoryLeak(Scenario):
 
     def __init__(
         self,
-        chunk_size=4 * 1024 * 1024,
-        interval=timedelta(seconds=1),
+        chunk_size=DEFAULT_CHUNK_SIZE,
+        interval=DEFAULT_INTERVAL,
     ):
-        super().__init__(name="leak-generator", daemon=True)
+        super().__init__(name=self.display_name(), daemon=True)
         self.chunk_size = chunk_size
         self.interval = interval
         self._stop_signal = Event()

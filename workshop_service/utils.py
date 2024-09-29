@@ -26,4 +26,4 @@ def parse_size(size_str: str | None) -> int | None:
     [size, scale] = m.groups()
     size = float(size)
     scale = SIZE_SUFFIX_SCALE_MAP[scale.lower()] if scale else 1
-    return size * scale
+    return int(size * scale)

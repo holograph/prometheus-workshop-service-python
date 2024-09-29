@@ -1,17 +1,23 @@
+import logging
+
 from fastapi import FastAPI, HTTPException
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+from workshop_service.diskspace import DiskSpace
 from workshop_service.memleak import MemoryLeak
 from workshop_service.scenario import Scenario
 
+
 __scenarios = {
     scenario.display_name(): scenario
-    for scenario in [MemoryLeak]
+    for scenario in [MemoryLeak, DiskSpace]
 }
 __current_scenario: Scenario | None = None
 
 
 app = FastAPI()
 FastAPIInstrumentor.instrument_app(app)
+logging.basicConfig(level=logging.INFO)
 
 
 @app.get("/health")
@@ -61,6 +67,7 @@ def scenario_action(alias: str, action: str) -> dict:
                 else:
                     raise HTTPException(status_code=304)
 
+        logging.info(f"Starting scenario {alias}")
         __current_scenario = requested()
         __current_scenario.start()
         return {"scenario": alias, "status": "running"}
@@ -68,6 +75,7 @@ def scenario_action(alias: str, action: str) -> dict:
     elif action == "stop":
         if not __current_scenario or not __current_scenario.is_alive() or type(__current_scenario) != requested:
             raise HTTPException(status_code=304)
+        logging.info(f"Stopping scenario {alias}")
         __current_scenario.stop()
         return {"scenario": alias, "status": "stopped"}
 
