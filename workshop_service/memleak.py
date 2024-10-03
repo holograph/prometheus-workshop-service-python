@@ -1,8 +1,7 @@
 import os
 import time
 from datetime import timedelta
-from threading import Thread, Event
-from unittest.mock import DEFAULT
+from threading import Event
 
 from workshop_service.scenario import Scenario
 from workshop_service.utils import parse_size
@@ -14,7 +13,7 @@ DEFAULT_INTERVAL = timedelta(seconds=1)
 class MemoryLeak(Scenario):
     @classmethod
     def display_name(cls) -> str:
-        return "memleak"
+        return "scenario1"
 
     chunk_size: int
     interval: timedelta

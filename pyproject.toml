@@ -6,9 +6,9 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
-fastapi = "^0.112.1"
+fastapi = {extras = ["standard"], version = "^0.115.0"}
 uvicorn = {extras = ["standard"], version = "^0.30.6"}
-opentelemetry-instrumentation-fastapi = "^0.47b0"
+prometheus-fastapi-instrumentator = "^7.0.0"
 
 [tool.poetry.group.dev.dependencies]
 fastapi-cli = "^0.0.5"

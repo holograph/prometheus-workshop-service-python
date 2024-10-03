@@ -1,4 +1,4 @@
-from abc import abstractmethod, abstractproperty, ABC, abstractclassmethod
+from abc import abstractmethod, ABC
 from threading import Thread
 
 

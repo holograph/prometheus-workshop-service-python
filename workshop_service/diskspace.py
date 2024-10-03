@@ -48,4 +48,4 @@ class DiskSpace(Scenario):
 
     @classmethod
     def display_name(cls):
-        return "diskspace"
+        return "scenario2"
