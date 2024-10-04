@@ -16,7 +16,7 @@ class RateLimit(Scenario):
 
     def run(self):
         while not self._stop_signal.is_set():
-            response = requests.get("http://localhost:8080/do_something")
+            response = requests.get("http://localhost:8080/scenario/do_something")
             if response.status_code != 200:
                 logging.warning(f"Got status code {response.status_code}!")
         self._stop_signal.clear()
@@ -29,3 +29,4 @@ class RateLimit(Scenario):
     @classmethod
     def display_name(cls):
         return "scenario3"
+
