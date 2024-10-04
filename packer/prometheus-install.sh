@@ -16,6 +16,7 @@ sudo groupadd --system prometheus
 sudo useradd -s /sbin/nologin --system -g prometheus prometheus
 sudo mkdir /etc/prometheus
 sudo mkdir /mnt/prometheus
+sudo chown prometheus:prometheus /mnt/prometheus
 
 echo '--- Installing Prometheus ---'
 PROMETHEUS_PACKAGE="prometheus-${PROMETHEUS_VERSION}.linux-$(dpkg --print-architecture)"
@@ -64,6 +65,7 @@ ExecStart=/usr/local/bin/prometheus \
 WantedBy=multi-user.target
 EOF
 
-echo '--- Enabling services ---'
+echo '--- Enabling Prometheus service ---'
 sudo systemctl daemon-reload
 sudo systemctl enable prometheus
+sudo systemctl start prometheus

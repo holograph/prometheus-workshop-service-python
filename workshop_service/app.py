@@ -3,15 +3,15 @@ import logging
 from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 
-import scenario
-import showcase
+import workshop_service.scenario
+import workshop_service.showcase
 
 app = FastAPI()
 Instrumentator().instrument(app).expose(app)
 logging.basicConfig(level=logging.INFO)
 
-app.include_router(showcase.router)
-app.include_router(scenario.router)
+app.include_router(workshop_service.showcase.router)
+app.include_router(workshop_service.scenario.router)
 
 if __name__ == "__main__":
     import uvicorn

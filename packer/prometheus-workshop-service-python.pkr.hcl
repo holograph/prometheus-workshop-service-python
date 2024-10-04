@@ -34,6 +34,7 @@ build {
       "cloud-init status --wait",
       "sudo apt-get update",
       "sudo apt-get upgrade -y",
+      "sudo apt-get install -y net-tools",
     ]
   }
 
@@ -42,7 +43,6 @@ build {
     destination = "/home/ubuntu/service-install.sh"
     direction   = "upload"
   }
-
   provisioner "shell" {
     inline = [
       "chmod +x ./service-install.sh && ./service-install.sh"
@@ -54,12 +54,26 @@ build {
     destination = "/home/ubuntu/prometheus-install.sh"
     direction   = "upload"
   }
-
   provisioner "shell" {
     inline = [
       "chmod +x ./prometheus-install.sh && ./prometheus-install.sh"
     ]
   }
 
-  #   Grafana + Configuration
+  provisioner "file" {
+    source      = "./grafana-install.sh"
+    destination = "/home/ubuntu/grafana-install.sh"
+    direction   = "upload"
+  }
+  provisioner "shell" {
+    inline = [
+      "chmod +x ./grafana-install.sh && ./grafana-install.sh"
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "rm ./service-install.sh ./grafana-install.sh ./prometheus-install.sh"
+    ]
+  }
 }
