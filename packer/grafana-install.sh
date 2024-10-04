@@ -1,16 +1,14 @@
 #!/bin/bash
 set -e
 
-export DEBIAN_FRONTEND=noninteractive
-sudo apt-get install -y apt-transport-https software-properties-common wget
+echo '- Installing Grafana apt repository'
 sudo mkdir -p /etc/apt/keyrings/
 wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
 echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
 sudo apt-get update
-sudo apt-get install -y grafana
 
-sudo systemctl daemon-reload
-sudo systemctl start grafana-server
+echo '- Installing Grafana'
+sudo apt-get install -y grafana
 
 # Enable anonymous login
 cat <<EOF | sudo patch /etc/grafana/grafana.ini
@@ -28,9 +26,12 @@ cat <<EOF | sudo patch /etc/grafana/grafana.ini
 > org_role = Admin
 EOF
 
-sudo systemctl restart grafana-server
+echo '- Starting Grafana'
+sudo systemctl daemon-reload
+sudo systemctl start grafana-server
+while ! nc -4z localhost 3000; do sleep 1; done
 
-# Set up Prometheus data source
+echo '- Setting up Prometheus data source'
 curl -XPOST -H 'Content-type: application/json'       \
   -d '{
         "name": "Prometheus",
@@ -40,4 +41,3 @@ curl -XPOST -H 'Content-type: application/json'       \
         "isDefault": true
       }'                                              \
   'http://localhost:3000/api/datasources'
-

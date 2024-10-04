@@ -8,9 +8,12 @@ packer {
 }
 
 source "amazon-ebs" "prometheus-workshop-service-python" {
-  ami_name      = "prometheus-workshop-service-python-${formatdate("YYYY-MM-DD", timestamp())}"
-  instance_type = "t2.medium"
-  region        = "eu-central-1"
+  ami_name              = "prometheus-workshop-service-python-${formatdate("YYYY-MM-DD", timestamp())}"
+  instance_type         = "t2.medium"
+  region                = "eu-central-1"
+  force_deregister      = true
+  force_delete_snapshot = true
+
 
   source_ami_filter {
     filters = {
@@ -29,51 +32,20 @@ build {
   name    = "prometheus-workshop-service-python"
   sources = ["source.amazon-ebs.prometheus-workshop-service-python"]
 
-  provisioner "shell" {
-    inline = [
-      "cloud-init status --wait",
-      "sudo apt-get update",
-      "sudo apt-get upgrade -y",
-      "sudo apt-get install -y net-tools",
-    ]
-  }
-
   provisioner "file" {
-    source      = "./service-install.sh"
-    destination = "/home/ubuntu/service-install.sh"
+    sources = [
+      "./base-install.sh",
+      "./service-install.sh",
+      "./prometheus-install.sh",
+      "./grafana-install.sh"
+    ]
+    destination = "/home/ubuntu/"
     direction   = "upload"
   }
   provisioner "shell" {
-    inline = [
-      "chmod +x ./service-install.sh && ./service-install.sh"
-    ]
-  }
-
-  provisioner "file" {
-    source      = "./prometheus-install.sh"
-    destination = "/home/ubuntu/prometheus-install.sh"
-    direction   = "upload"
+    inline = ["chmod +x ./*-install.sh && ./base-install.sh"]
   }
   provisioner "shell" {
-    inline = [
-      "chmod +x ./prometheus-install.sh && ./prometheus-install.sh"
-    ]
-  }
-
-  provisioner "file" {
-    source      = "./grafana-install.sh"
-    destination = "/home/ubuntu/grafana-install.sh"
-    direction   = "upload"
-  }
-  provisioner "shell" {
-    inline = [
-      "chmod +x ./grafana-install.sh && ./grafana-install.sh"
-    ]
-  }
-
-  provisioner "shell" {
-    inline = [
-      "rm ./service-install.sh ./grafana-install.sh ./prometheus-install.sh"
-    ]
+    inline = ["rm ./*-install.sh"]
   }
 }

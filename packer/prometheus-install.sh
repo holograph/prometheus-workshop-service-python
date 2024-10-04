@@ -4,12 +4,8 @@ set -e
 export DEBIAN_FRONTEND=noninteractive
 PROMETHEUS_VERSION=2.54.1
 
-echo '--- Initial setup ---'
-
-echo '- Updating and installing packages'
-sudo apt-get -y update
-sudo apt-get -y upgrade
-sudo apt-get -y install jq golang-go curl unzip
+echo '- Installing Go'
+sudo apt-get -y install golang-go
 
 echo '- Setting up Prometheus user/group'
 sudo groupadd --system prometheus
@@ -18,7 +14,7 @@ sudo mkdir /etc/prometheus
 sudo mkdir /mnt/prometheus
 sudo chown prometheus:prometheus /mnt/prometheus
 
-echo '--- Installing Prometheus ---'
+echo '- Installing Prometheus'
 PROMETHEUS_PACKAGE="prometheus-${PROMETHEUS_VERSION}.linux-$(dpkg --print-architecture)"
 PROMETHEUS_PACKAGE_URL="https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/${PROMETHEUS_PACKAGE}.tar.gz"
 
@@ -65,7 +61,7 @@ ExecStart=/usr/local/bin/prometheus \
 WantedBy=multi-user.target
 EOF
 
-echo '--- Enabling Prometheus service ---'
+echo '- Enabling Prometheus service'
 sudo systemctl daemon-reload
 sudo systemctl enable prometheus
 sudo systemctl start prometheus
