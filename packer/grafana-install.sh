@@ -28,6 +28,7 @@ EOF
 
 echo '- Starting Grafana'
 sudo systemctl daemon-reload
+sudo systemctl enable grafana-server.service
 sudo systemctl start grafana-server
 while ! nc -4z localhost 3000; do sleep 1; done
 

@@ -15,8 +15,8 @@ sudo apt-get install -y                           \
   wget net-tools jq curl zip unzip
 
 echo '- Setting up Linux desktop and lab user'
-sudo apt-get install -y --no-install-recommends ubuntu-desktop-minimal
-sudo useradd -g sudo -m -p $(echo "student" | openssl passwd -1 -stdin) student
+sudo apt-get install -y ubuntu-desktop-minimal
+sudo useradd -g sudo -m -s /bin/bash -p $(echo "student" | openssl passwd -1 -stdin) student
 
 echo '--- Installing lab components ---'
 ./service-install.sh
