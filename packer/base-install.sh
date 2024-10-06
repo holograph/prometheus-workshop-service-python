@@ -3,6 +3,7 @@
 cloud-init status --wait
 
 export DEBIAN_FRONTEND=noninteractive
+export DEBCONF_NONINTERACTIVE_SEEN=true
 
 echo '--- Installing base system ---'
 
@@ -14,7 +15,7 @@ sudo apt-get install -y                           \
   wget net-tools jq curl zip unzip
 
 echo '- Setting up Linux desktop and lab user'
-sudo apt-get install -y ubuntu-desktop gdm3
+sudo apt-get install -y --no-install-recommends ubuntu-desktop-minimal
 sudo useradd -g sudo -m -p $(echo "student" | openssl passwd -1 -stdin) student
 
 echo '--- Installing lab components ---'
