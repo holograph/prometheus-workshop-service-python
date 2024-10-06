@@ -9,11 +9,16 @@ packer {
 
 source "amazon-ebs" "prometheus-workshop-service-python" {
   ami_name              = "prometheus-workshop-service-python-${formatdate("YYYY-MM-DD", timestamp())}"
-  instance_type         = "t2.medium"
+  instance_type         = "t2.large"
   region                = "eu-central-1"
   force_deregister      = true
   force_delete_snapshot = true
 
+  launch_block_device_mappings {
+    device_name           = "/dev/sda1" # Root device
+    delete_on_termination = true
+    volume_size           = 30
+  }
 
   source_ami_filter {
     filters = {
@@ -24,6 +29,8 @@ source "amazon-ebs" "prometheus-workshop-service-python" {
     most_recent = true
     owners      = ["099720109477"]
   }
+
+
 
   ssh_username = "ubuntu"
 }
