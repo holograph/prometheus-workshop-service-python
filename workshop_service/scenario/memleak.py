@@ -6,7 +6,7 @@ from threading import Event
 from workshop_service.scenario import Scenario
 from workshop_service.utils import parse_size
 
-DEFAULT_CHUNK_SIZE = parse_size(os.environ.get("SCENARIO_MEMLEAK_CHUNK_SIZE", "4mb"))
+DEFAULT_CHUNK_SIZE = parse_size(os.environ.get("SCENARIO_MEMLEAK_CHUNK_SIZE", "1mb"))
 DEFAULT_INTERVAL = timedelta(seconds=1)
 
 
