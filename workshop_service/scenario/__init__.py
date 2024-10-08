@@ -31,6 +31,25 @@ def health() -> dict:
         }
     }
 
+request_count_from = 0
+request_count = 0
+
+@router.get("/do_something")
+def sample_endpoint() -> dict:
+    # "Rate limit"
+    global request_count, request_count_from
+    if request_count_from <= time.time() - 60:
+        request_count_from = time.time()
+        request_count = 1
+    elif request_count >= 10:
+        raise HTTPException(status_code=429)
+    else:
+        request_count += 1
+
+    seconds = float(random.randrange(100, 1000)) / 1000.0
+    time.sleep(seconds)
+    return {"status": "ok"}
+
 @router.get("/{alias}")
 def scenario_status(alias: str) -> dict:
     global __current_scenario
@@ -78,22 +97,3 @@ def scenario_action(alias: str, action: str) -> dict:
 
     else:
         raise HTTPException(status_code=400, detail=f"Unknown action '{action}'")
-
-request_count_from = 0
-request_count = 0
-
-@router.get("/do_something")
-def sample_endpoint() -> dict:
-    # "Rate limit"
-    global request_count, request_count_from
-    if request_count_from <= time.time() - 60:
-        request_count_from = time.time()
-        request_count = 1
-    elif request_count >= 10:
-        raise HTTPException(status_code=429)
-    else:
-        request_count += 1
-
-    seconds = float(random.randrange(100, 1000)) / 1000.0
-    time.sleep(seconds)
-    return {"status": "ok"}
