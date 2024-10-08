@@ -14,13 +14,9 @@ sudo apt-get install -y                           \
   apt-transport-https software-properties-common  \
   wget net-tools jq curl zip unzip
 
-echo '- Setting up Linux desktop and lab user'
-sudo apt-get install -y ubuntu-desktop-minimal
-sudo useradd -g sudo -m -s /bin/bash -p $(echo "student" | openssl passwd -1 -stdin) student
-sudo mkdir -p /home/student/.ssh
-echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEz4jal99UkJ8EOL/oTQQRvlRZa+gF8PXI1PeEl/+y35 lab@example.com' \
-  | sudo tee /home/student/.ssh/authorized_keys
-sudo chown -R student /home/student/.ssh
+echo '- Setting up MOTD'
+cat <<"EOF_OUT" | sudo tee /usr/local/sbin/generate-motd.sh
+#!/bin/bash
 
 public_ip="$(curl http://169.254.169.254/latest/meta-data/public-ipv4)"
 cat <<EOF | sudo tee /etc/motd
@@ -45,6 +41,29 @@ Additionally, if desired, you can also access Prometheus directly via: http://${
 Good luck!
 
 EOF
+EOF_OUT
+
+cat <<EOF | sudo tee /etc/systemd/system/generate-motd.service
+[Unit]
+Description=Generate MOTD for lab setup
+
+[Service]
+ExecStart=/usr/local/sbin/generate-motd.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo chmod u+x /usr/local/sbin/generate-motd.sh
+sudo systemctl enable generate-motd.service
+
+echo '- Setting up Linux desktop and lab user'
+sudo apt-get install -y ubuntu-desktop-minimal
+sudo useradd -g sudo -m -s /bin/bash -p $(echo "student" | openssl passwd -1 -stdin) student
+sudo mkdir -p /home/student/.ssh
+echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEz4jal99UkJ8EOL/oTQQRvlRZa+gF8PXI1PeEl/+y35 lab@example.com' \
+  | sudo tee /home/student/.ssh/authorized_keys
+sudo chown -R student /home/student/.ssh
 
 echo '--- Installing lab components ---'
 ./service-install.sh
