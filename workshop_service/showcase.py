@@ -1,22 +1,22 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-from prometheus_client import Counter, Histogram, Gauge
+from opentelemetry.metrics import get_meter
 
 router = APIRouter(prefix="/showcase")
-
-counter = Counter("my_count", "Event count", ["my_label"])
-histogram = Histogram("my_duration", "Event duration", buckets=[10, 100, 1000, 2000, 5000])
-gauge = Gauge("my_value", "Some stateful value")
+meter = get_meter("showcase")
+counter = meter.create_counter("my_count", description="Event count")
+histogram = meter.create_histogram("my_duration", unit="ms", description="Event duration")
+gauge = meter.create_gauge("my_value", description="Some stateful value")
 
 @router.get("/count/{label}")
 def count(label: str) -> dict:
-    counter.labels(my_label=label).inc(1)
+    counter.add(1, {"my_label": label})
     return {"status": "ok"}
 
 
 @router.get("/duration/{length_ms}")
 def duration(length_ms: int) -> dict:
-    histogram.observe(length_ms)
+    histogram.record(length_ms)
     return {"status": "ok"}
 
 class GaugeData(BaseModel):
