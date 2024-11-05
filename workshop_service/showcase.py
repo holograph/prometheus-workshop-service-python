@@ -2,10 +2,12 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from opentelemetry.metrics import get_meter
 
+DURATION_INSTRUMENT = "my_duration"
+
 router = APIRouter(prefix="/showcase")
 meter = get_meter("showcase")
+histogram = meter.create_histogram(DURATION_INSTRUMENT, unit="ms", description="Event duration")
 counter = meter.create_counter("my_count", description="Event count")
-histogram = meter.create_histogram("my_duration", unit="ms", description="Event duration")
 gauge = meter.create_gauge("my_value", description="Some stateful value")
 
 @router.get("/count/{label}")

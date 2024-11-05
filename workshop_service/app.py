@@ -5,25 +5,28 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
 from opentelemetry.metrics import set_meter_provider
 from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.view import View, ExplicitBucketHistogramAggregation
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
-import workshop_service.scenario
-import workshop_service.showcase
+from workshop_service import scenario, showcase
 
 app = FastAPI()
 FastAPIInstrumentor.instrument_app(app)
 logging.basicConfig(level=logging.INFO)
 
-app.include_router(workshop_service.showcase.router)
-app.include_router(workshop_service.scenario.router)
+app.include_router(showcase.router)
+app.include_router(scenario.router)
 
-set_meter_provider(
-    MeterProvider(
-        metric_readers=[
-            PeriodicExportingMetricReader(OTLPMetricExporter(endpoint="http://localhost:4318/v1/metrics"))
-        ]
-    )
+oltp_exporter = PeriodicExportingMetricReader(OTLPMetricExporter(endpoint="http://localhost:4318/v1/metrics"))
+duration_view = View(
+    instrument_name=showcase.DURATION_INSTRUMENT,
+    aggregation=ExplicitBucketHistogramAggregation(range(0, 10000, 500)),
 )
+meter_provider = MeterProvider(
+    metric_readers=[oltp_exporter],
+    views=[duration_view]
+)
+set_meter_provider(meter_provider)
 
 if __name__ == "__main__":
     import uvicorn

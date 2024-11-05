@@ -67,5 +67,6 @@ sudo chown -R student /home/student/.ssh
 
 echo '--- Installing lab components ---'
 ./service-install.sh
+./otel-collector-install.sh
 ./prometheus-install.sh
 ./grafana-install.sh

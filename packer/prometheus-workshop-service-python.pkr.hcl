@@ -43,6 +43,7 @@ build {
     sources = [
       "./base-install.sh",
       "./service-install.sh",
+      "./otel-collector-install.sh",
       "./prometheus-install.sh",
       "./grafana-install.sh"
     ]
