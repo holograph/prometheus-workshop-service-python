@@ -3,7 +3,7 @@ set -e
 
 export DEBIAN_FRONTEND=noninteractive
 OTEL_COLLECTOR_VERSION=0.113.0
-OTEL_COLLECTOR_PACKAGE="otelcol_${OTEL_COLLECTOR_VERSION}_linux_$(uname -m).deb"
+OTEL_COLLECTOR_PACKAGE="otelcol_${OTEL_COLLECTOR_VERSION}_linux_$(dpkg --print-architecture).deb"
 
 wget "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v${OTEL_COLLECTOR_VERSION}/${OTEL_COLLECTOR_PACKAGE}"
 sudo dpkg -i "${OTEL_COLLECTOR_PACKAGE}"

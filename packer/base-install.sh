@@ -70,7 +70,7 @@ sudo chown -R student /home/student
 echo '- Setting up Conky'
 sudo -ustudent desktop-file-install --dir=/home/student/.config/autostart /usr/share/applications/conky.desktop
 sudo mkdir -p /home/student/.config/conky
-cat <<"EOF" | sudo tee /home/student/.config/conky
+cat <<"EOF" | sudo tee /home/student/.config/conky/conky.conf
 -- Conky, a system monitor https://github.com/brndnmtthws/conky
 --
 -- This configuration file is Lua code. You can write code in here, and it will
