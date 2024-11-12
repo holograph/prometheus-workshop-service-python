@@ -9,7 +9,7 @@ wget "https://github.com/open-telemetry/opentelemetry-collector-releases/release
 sudo dpkg -i "${OTEL_COLLECTOR_PACKAGE}"
 rm "${OTEL_COLLECTOR_PACKAGE}"
 
-sudo cat <<EOF >/etc/otelcol/config.yaml
+cat <<"EOF" | sudo tee /etc/otelcol/config.yaml
 receivers:
   otlp:
     protocols:

@@ -7,10 +7,18 @@ packer {
   }
 }
 
+variable "aws_region" {
+  default = env("AWS_REGION")
+}
+
+variable "aws_instance_type" {
+  default = "t3.large"
+}
+
 source "amazon-ebs" "prometheus-workshop-service-python" {
   ami_name              = "prometheus-workshop-service-python-${formatdate("YYYY-MM-DD", timestamp())}"
-  instance_type         = "t2.large"
-  region                = "eu-central-1"
+  instance_type         = var.aws_instance_type
+  region                = var.aws_region
   force_deregister      = true
   force_delete_snapshot = true
 
@@ -29,8 +37,6 @@ source "amazon-ebs" "prometheus-workshop-service-python" {
     most_recent = true
     owners      = ["099720109477"]
   }
-
-
 
   ssh_username = "ubuntu"
 }
