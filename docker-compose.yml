@@ -7,7 +7,7 @@ services:
     ports:
       - 4317:4317 # OTLP gRPC receiver
       - 4318:4318 # OTLP http receiver
-      - 8080      # Prometheus scrape endpoint
+      - 8000      # Prometheus scrape endpoint
   prometheus:
     image: prom/prometheus
     container_name: prometheus
