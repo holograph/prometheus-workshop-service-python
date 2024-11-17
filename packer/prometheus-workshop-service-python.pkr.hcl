@@ -12,7 +12,7 @@ variable "aws_region" {
 }
 
 variable "aws_instance_type" {
-  default = "t3.large"
+  default = "c6i.xlarge"
 }
 
 source "amazon-ebs" "prometheus-workshop-service-python" {
@@ -48,6 +48,7 @@ build {
   provisioner "file" {
     sources = [
       "./base-install.sh",
+      "./conky-install.sh",
       "./service-install.sh",
       "./otel-collector-install.sh",
       "./prometheus-install.sh",
