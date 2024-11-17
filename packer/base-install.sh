@@ -30,6 +30,7 @@ cat <<"EOF" | sudo tee /etc/apt/apt.conf.d/20auto-upgrade
 APT::Periodic::Update-Package-Lists "0";
 APT::Periodic::Unattended-Upgrade "0";
 EOF
+sudo sed -i 's/Prompt=lts/Prompt=never/' /etc/update-manager/release-upgrades
 
 echo '--- Installing lab components ---'
 ./service-install.sh
