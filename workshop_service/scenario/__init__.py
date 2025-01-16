@@ -1,4 +1,4 @@
-
+import enum
 import logging
 import random
 import time
@@ -34,7 +34,8 @@ def health() -> dict:
 request_count_from = 0
 request_count = 0
 
-@router.get("/do_something")
+# TODO relocate to ratelimit scenario
+@router.get("/do_something", include_in_schema=False)
 def sample_endpoint() -> dict:
     # "Rate limit"
     global request_count, request_count_from
@@ -62,8 +63,12 @@ def scenario_status(alias: str) -> dict:
     else:
         return {"scenario": alias, "status": "stopped"}
 
+class Action(enum.Enum):
+    START = "start"
+    STOP = "stop"
+
 @router.post("/{alias}")
-def scenario_action(alias: str, action: str) -> dict:
+def scenario_action(alias: str, action: Action) -> dict:
     global __current_scenario
 
     requested = __scenarios.get(alias)
@@ -72,7 +77,7 @@ def scenario_action(alias: str, action: str) -> dict:
     if not action:
         raise HTTPException(status_code=400, detail="Missing query parameter 'action'")
 
-    if action == "start":
+    if action == Action.START:
         if __current_scenario:
             if __current_scenario.is_alive():
                 if not isinstance(__current_scenario, requested):
@@ -88,7 +93,7 @@ def scenario_action(alias: str, action: str) -> dict:
         __current_scenario.start()
         return {"scenario": alias, "status": "running"}
 
-    elif action == "stop":
+    elif action == Action.STOP:
         if not __current_scenario or not __current_scenario.is_alive() or not isinstance(__current_scenario, requested):
             raise HTTPException(status_code=304)
         logging.info(f"Stopping scenario {alias}")

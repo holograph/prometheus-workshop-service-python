@@ -10,12 +10,22 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 
 from workshop_service import scenario, showcase
 
-app = FastAPI()
+app = FastAPI(openapi_tags=[
+    {
+        "name": "showcase",
+        "description": "APIs for the metric showcase"
+    },
+    {
+        "name": "scenario",
+        "description": "APIs for the scenarios"
+    },
+])
+
 FastAPIInstrumentor.instrument_app(app)
 logging.basicConfig(level=logging.INFO)
 
-app.include_router(showcase.router)
-app.include_router(scenario.router)
+app.include_router(showcase.router, tags=["showcase"])
+app.include_router(scenario.router, tags=["scenario"])
 
 oltp_exporter = PeriodicExportingMetricReader(OTLPMetricExporter(endpoint="http://localhost:4318/v1/metrics"))
 duration_view = View(
