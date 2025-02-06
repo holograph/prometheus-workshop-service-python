@@ -36,7 +36,7 @@ class MemoryLeak(Scenario):
     def run(self):
         while not self._stop_signal.is_set():
             if len(self._chunks) < self.max_chunks:
-                self._chunks.append([0] * self.chunk_size)
+                self._chunks.append(bytearray(self.chunk_size))
             time.sleep(self.interval.total_seconds())
         self._stop_signal.clear()
         self._chunks.clear()
